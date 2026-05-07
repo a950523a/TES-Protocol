@@ -113,24 +113,26 @@ typedef struct {
 // ─── 充電停止原因 ──────────────────────────────────────────────────────────────
 
 typedef enum {
-    STOP_REASON_NORMAL = 0,  // SOC / 電壓目標達成
-    STOP_REASON_USER   = 1,  // 手動停止（按鈕或 REST API）
-    STOP_REASON_FAULT  = 2,
-    STOP_REASON_EMERG  = 3,
-    STOP_REASON_BMS    = 4,  // BMS 撤回充電許可
-    STOP_REASON_TIMER  = 5,
+    STOP_REASON_NORMAL  = 0,  // SOC 目標達成
+    STOP_REASON_USER    = 1,  // 手動停止（按鈕或 REST API）
+    STOP_REASON_FAULT   = 2,
+    STOP_REASON_EMERG   = 3,
+    STOP_REASON_BMS     = 4,  // BMS 撤回充電許可
+    STOP_REASON_TIMER   = 5,  // 計時到達
+    STOP_REASON_VOLTAGE = 6,  // 電壓目標達成
 } stop_reason_t;
 
-// ─── 充電紀錄（可放入 charger_event_t payload，12 bytes） ─────────────────────
+// ─── 充電紀錄（可放入 charger_event_t payload，16 bytes ≤ 24 bytes max） ──────
 
 typedef struct {
-    uint32_t duration_s;    // 充電時長（秒）
-    float    energy_wh;     // 充電電量（Wh，V×I × 10ms / 3600000）
-    uint8_t  soc_start;     // 充電開始時 SOC（0-100）
-    uint8_t  soc_end;       // 充電結束時 SOC（0-100）
+    uint32_t duration_s;       // 充電時長（秒）
+    float    energy_wh;        // 充電電量（Wh，V×I × 10ms / 3600000）
+    float    stop_voltage_v;   // 停止時輸出電壓（STOP_REASON_VOLTAGE 時有效，其他為 0）
+    uint8_t  soc_start;        // 充電開始時 SOC（0-100）
+    uint8_t  soc_end;          // 充電結束時 SOC（0-100）
     uint8_t  stop_reason;      // stop_reason_t
     uint8_t  energy_estimated; // 1 = PSU 未連線，電量為 ADC 預估值
-} charge_session_t;         // 12 bytes
+} charge_session_t;            // 16 bytes
 
 // ─── CAN 診斷快照（最後收到的 0x500 / 0x501 解碼值） ────────────────────────
 
