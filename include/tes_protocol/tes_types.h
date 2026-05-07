@@ -22,6 +22,7 @@ typedef enum {
 typedef enum {
     STOP_MODE_SOC     = 0,   // 依 BMS 回報 SOC 停止（預設）
     STOP_MODE_VOLTAGE = 1,   // 依輸出電壓停止
+    STOP_MODE_TIMER   = 2,   // 依充電時長停止
 } stop_mode_t;
 
 // ─── CP 電壓狀態（以 ADS1115 讀取直流電壓判斷） ──────────────────────────────
