@@ -28,10 +28,79 @@ void tes_codec_decode_vehicle_emergency(const uint8_t *data, uint8_t dlc,
                                         tes_vehicle_emergency_t *out)
 {
     if (!data || !out || dlc < 1) return;
-    out->error_request_flags = data[0];
+    out->error_request_flags    = data[0];
+    out->max_charge_current_01a = (dlc >= 4) ? (uint16_t)((uint16_t)data[3] << 8 | data[2]) : 0;
+    out->manufacturer_id        = (dlc >= 6) ? (uint16_t)((uint16_t)data[5] << 8 | data[4]) : 0;
 }
 
 // ─── 編碼 ─────────────────────────────────────────────────────────────────────
+
+void tes_codec_encode_vehicle_status(const tes_vehicle_status_t *in, uint8_t *data)
+{
+    if (!in || !data) return;
+    data[0] = in->fault_flags;
+    data[1] = in->status_flags;
+    data[2] = (uint8_t)(in->charge_current_cmd & 0xFF);
+    data[3] = (uint8_t)(in->charge_current_cmd >> 8);
+    data[4] = (uint8_t)(in->charge_voltage_limit & 0xFF);
+    data[5] = (uint8_t)(in->charge_voltage_limit >> 8);
+    data[6] = (uint8_t)(in->max_charge_voltage & 0xFF);
+    data[7] = (uint8_t)(in->max_charge_voltage >> 8);
+}
+
+void tes_codec_encode_vehicle_params(const tes_vehicle_params_t *in, uint8_t *data)
+{
+    if (!in || !data) return;
+    data[0] = in->seq_num;
+    data[1] = in->soc;
+    data[2] = (uint8_t)(in->max_charge_time_min & 0xFF);
+    data[3] = (uint8_t)(in->max_charge_time_min >> 8);
+    data[4] = (uint8_t)(in->est_end_time_min & 0xFF);
+    data[5] = (uint8_t)(in->est_end_time_min >> 8);
+    data[6] = 0;
+    data[7] = 0;
+}
+
+void tes_codec_encode_vehicle_emergency(const tes_vehicle_emergency_t *in, uint8_t *data)
+{
+    if (!in || !data) return;
+    memset(data, 0, 8);
+    data[0] = in->error_request_flags;
+    data[2] = (uint8_t)(in->max_charge_current_01a & 0xFF);
+    data[3] = (uint8_t)(in->max_charge_current_01a >> 8);
+    data[4] = (uint8_t)(in->manufacturer_id & 0xFF);
+    data[5] = (uint8_t)(in->manufacturer_id >> 8);
+}
+
+void tes_codec_decode_charger_status(const uint8_t *data, uint8_t dlc,
+                                     tes_charger_status_t *out)
+{
+    if (!data || !out || dlc < 6) return;
+    out->fault_flags          = data[0];
+    out->status_flags         = data[1];
+    out->available_voltage    = (uint16_t)((uint16_t)data[3] << 8 | data[2]);
+    out->available_current    = (uint16_t)((uint16_t)data[5] << 8 | data[4]);
+    out->fault_detect_voltage = (dlc >= 8) ? (uint16_t)((uint16_t)data[7] << 8 | data[6]) : 0;
+}
+
+void tes_codec_decode_charger_params(const uint8_t *data, uint8_t dlc,
+                                     tes_charger_params_t *out)
+{
+    if (!data || !out || dlc < 6) return;
+    out->seq_num            = data[0];
+    out->rated_power_50w    = data[1];
+    out->actual_voltage     = (uint16_t)((uint16_t)data[3] << 8 | data[2]);
+    out->actual_current     = (uint16_t)((uint16_t)data[5] << 8 | data[4]);
+    out->remaining_time_min = (dlc >= 8) ? (uint16_t)((uint16_t)data[7] << 8 | data[6]) : 0xFFFF;
+}
+
+void tes_codec_decode_charger_emergency(const uint8_t *data, uint8_t dlc,
+                                        tes_charger_emergency_t *out)
+{
+    if (!data || !out || dlc < 1) return;
+    out->emergency_flags = data[0];
+    out->manufacturer_id = (dlc >= 6) ? (uint16_t)((uint16_t)data[5] << 8 | data[4]) : 0;
+}
 
 void tes_codec_encode_charger_status(const tes_charger_status_t *in, uint8_t *data)
 {

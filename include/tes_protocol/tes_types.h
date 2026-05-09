@@ -74,8 +74,10 @@ typedef struct {
 
 // H'5F0  Vehicle → Charger（緊急）
 typedef struct {
-    uint8_t error_request_flags;    // byte 0：bit0=緊急停止請求
-} tes_vehicle_emergency_t;          // CAN ID 0x5F0
+    uint8_t  error_request_flags;      // byte 0：bit0=緊急停止請求 bit1=熔接異常
+    uint16_t max_charge_current_01a;   // bytes 2-3：本次充電最大充電電流，0.1A/bit
+    uint16_t manufacturer_id;          // bytes 4-5：車輛製造商認證編號
+} tes_vehicle_emergency_t;             // CAN ID 0x5F0
 
 // H'508  Charger → Vehicle（充電樁狀態）
 typedef struct {
