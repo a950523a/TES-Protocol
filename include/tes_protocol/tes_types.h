@@ -185,7 +185,7 @@ typedef enum {
                                     //   a = 0x5F0 error_request_flags  b = 0
 } fault_source_t;
 
-// ─── 充電紀錄（可放入 charger_event_t payload，16 bytes ≤ 24 bytes max） ──────
+// ─── 充電紀錄（可放入 charger_event_t payload，24 bytes = 上限） ──────────────
 
 typedef struct {
     uint32_t duration_s;       // 充電時長（秒）
@@ -196,7 +196,13 @@ typedef struct {
     uint8_t  soc_end;          // 充電結束時 SOC（0-100）
     uint8_t  stop_reason;      // stop_reason_t
     uint8_t  energy_estimated; // 1 = PSU 未連線，電量為 ADC 預估值
-} charge_session_t;            // 20 bytes（≤ charger_event_t.payload 的 24 bytes）
+    // stop_reason=STOP_REASON_FAULT/EMERG 時只知道「故障了」，對使用者毫無幫助。
+    // 這兩欄把當下的診斷資訊一起存進歷史，讓紀錄自己就能說明原因，
+    // 不必叫使用者去翻 Log。意義與 tes_snapshot_t 的同名欄位一致。
+    uint8_t  fault_source;     // fault_source_t，非故障停止時為 FAULT_SRC_NONE
+    uint8_t  _pad;             // 對齊 fault_ctx_a
+    uint16_t fault_ctx_a;      // 故障情境值，意義依 fault_source 而定
+} charge_session_t;            // 24 bytes（正好等於 charger_event_t.payload 上限）
 
 // ─── CAN 診斷快照（最後收到的 0x500 / 0x501 解碼值） ────────────────────────
 
