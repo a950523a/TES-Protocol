@@ -1,7 +1,7 @@
 #pragma once
 // tes_codec.h — TES-0D-02-01 CAN 訊框編解碼
 // 純資料轉換，無 OS 依賴，無副作用
-#include "tes_protocol/tes_types.h"
+#include "tes_protocol/tes_wire.h"
 #include <stdint.h>
 
 // ─── 解碼：原始位元組 → 結構體（vehicle → charger 方向）────────────────────
