@@ -183,6 +183,9 @@ typedef enum {
     FAULT_SRC_EMERGENCY_BTN,        // 硬體緊急停止按鈕            a = b = 0
     FAULT_SRC_EMERGENCY_VEHICLE,    // 車端 0x5F0 緊急停止請求
                                     //   a = 0x5F0 error_request_flags  b = 0
+    FAULT_SRC_OVER_CURRENT,         // 實測電流持續超過車端請求或最大電流（電源無法被命令，例如
+                                    //   旋鈕電源：BMS 降低請求時電源照推）
+                                    //   a = 實測 0.1A  b = 車端請求 0.1A
 } fault_source_t;
 
 // ─── 充電紀錄（可放入 charger_event_t payload，24 bytes = 上限） ──────────────
