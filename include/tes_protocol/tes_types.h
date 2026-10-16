@@ -17,6 +17,7 @@ typedef enum {
     STOP_MODE_SOC     = 0,   // 依 BMS 回報 SOC 停止（預設）
     STOP_MODE_VOLTAGE = 1,   // 依輸出電壓停止
     STOP_MODE_TIMER   = 2,   // 依充電時長停止
+    STOP_MODE_ENERGY  = 3,   // 依本次充入電量停止（Wh）。沒有電流實測時電量是估算值，可能提早停
 } stop_mode_t;
 
 // ─── CP 電壓狀態（以 ADS1115 讀取直流電壓判斷） ──────────────────────────────
@@ -67,6 +68,7 @@ typedef enum {
     STOP_REASON_BMS     = 4,  // BMS 撤回充電許可
     STOP_REASON_TIMER   = 5,  // 計時到達
     STOP_REASON_VOLTAGE = 6,  // 電壓目標達成
+    STOP_REASON_ENERGY  = 7,  // 充入電量目標達成
 } stop_reason_t;
 
 // ─── 故障來源（僅供診斷／顯示，不透過 CAN 傳送）──────────────────────────────
